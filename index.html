@@ -2,83 +2,152 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>ToDoアプリ</title>
-  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css'>
-<link rel='stylesheet' href='https://unpkg.com/@mdi/font@6.x/css/materialdesignicons.min.css'>
-<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900'>
+  <title>A Pen by kizu0725</title>
+  
 
 </head>
 <body>
 <!-- partial:index.partial.html -->
-<!-- Vueで指定された"app"要素、この中でのみVueが有効 -->
-<div id="app">
-  <v-app>
-    <v-content>
-      <v-container>
-        <v-row
-          class="text-h3 mb-3 mt-3"
-          justify="center"
-          >
-          My ToDo App
-        </v-row>
-       　
-        <v-row
-          class="mb-3 mt-3"
-          align="center"
-          justify="center"
-          >
-          <v-col 
-            cols="6"            
-            >
-            <v-text-field
-                  class="ml-6 mr-6"
-                  v-model:value="task"                         
-                  label="タスクを入力"
-                  placeholder="タスクを入力…"
-                  outlined
-            >
-          </v-col>
-        </v-row>
-        <v-row
-          class="mb-3 mt-3"
-          align="center"
-          justify="center"
-          >
-          タスク内容：{{ task }}
-          <v-btn v-on:click="addTask"
-               color="secondary"
-  　　　　　　　elevation="2"
-  　　　　　　　small
-  　　　　　　　x-large
-               >
-                 <v-icon dark>
-                   mdi-plus
-                 </v-icon>
-               </v-btn>
-          
-        </v-row>
-        <v-row
-          class="mb-3 mt-3"
-          justify="center"
-          > 
-          <v-btn v-on:click="clearAll"
-                 
-                 rounded
-                 >全てのToDoをクリア</v-btn>
-        </v-row>
-        <v-row 
-          class="mb-3 mt-3"
-          justify="center"
-          v-for="todo in todoList">
-          {{ todo }}
-        </v-row>
-      </v-container>
-    </v-content>
-  </v-app>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Calendar App</title>
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Dancing Script', cursive;
+    }
+    .v-application {
+      font-family: 'Dancing Script', cursive;
+    }
+    .v-calendar .v-event {
+      font-family: 'Dancing Script', cursive;
+    }
+    .v-calendar-weekly__day {
+      font-family: 'Dancing Script', cursive;
+    }
+    .v-calendar-weekly__day__interval {
+      font-family: 'Dancing Script', cursive;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main>
+        <v-container>
+          <v-row justify="space-between" align="center">
+            <v-btn @click="prevMonth">Last Month</v-btn>
+            <h1 class="text-center">Calendar</h1>
+            <v-btn @click="nextMonth">Next Month</v-btn>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <v-sheet class="pa-3" color="grey lighten-4">
+                <v-calendar
+                  v-model="focus"
+                  ref="calendar"
+                  :events="events"
+                  color="primary"
+                  @click:event="onEventClick"
+                  :weekdays="[0, 1, 2, 3, 4, 5, 6]"
+                  :short-intervals="true"
+                  :interval-count="24"
+                  :interval-height="40"
+                  locale="en-us"
+                ></v-calendar>
+              </v-sheet>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="4">
+              <v-text-field
+                v-model="newEvent.name"
+                label="Event Name"
+                outlined
+                dense
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-menu
+                ref="menu"
+                v-model="menu"
+                :close-on-content-click="true"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="newEvent.date"
+                    label="Select Date"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    outlined
+                    dense
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="newEvent.date"
+                  no-title
+                  scrollable
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="4">
+              <v-menu
+                ref="colorMenu"
+                v-model="colorMenu"
+                :close-on-content-click="true"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="newEvent.color"
+                    label="Select Color"
+                    prepend-icon="mdi-palette"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    outlined
+                    dense
+                  ></v-text-field>
+                </template>
+                <v-color-picker
+                  v-model="newEvent.color"
+                  mode="hexa"
+                  swatches
+                ></v-color-picker>
+              </v-menu>
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-btn
+              color="primary"
+              dark
+              @click="addEvent"
+            >Add Event</v-btn>
+          </v-row>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
 <!-- partial -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js'></script><script  src="./script.js"></script>
+  <script  src="./script.js"></script>
 
 </body>
 </html>

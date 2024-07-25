@@ -1,23 +1,41 @@
-const app = new Vue({
-  el: '#app', // Vueが管理する一番外側のDOM要素
+new Vue({
+  el: '#app',
   vuetify: new Vuetify(),
-  data: {
-    // Vue内部で使いたい変数は全てこの中に定義する
-    task: '',
-    todoList: [], // これは配列
-  },
+  data: () => ({
+    focus: '',
+    menu: false,
+    colorMenu: false,
+    newEvent: {
+      name: '',
+      date: '',
+      color: ''
+    },
+    events: [] // ここを空の配列にします
+  }),
   methods: {
-    // 関数はここ
-    addTask: function() {
-      console.log('次のタスクが追加されました：', this.task);
-      // 配列の先頭に現在のタスク内容を追加する（最後尾の場合はpush）
-      this.todoList.unshift(this.task);
-      console.log('現在のToDo一覧：', this.todoList);
+    addEvent() {
+      if (this.newEvent.name && this.newEvent.date && this.newEvent.color) {
+        this.events.push({
+          name: this.newEvent.name,
+          start: this.newEvent.date,
+          end: this.newEvent.date,
+          color: this.newEvent.color
+        });
+        this.newEvent.name = '';
+        this.newEvent.date = '';
+        this.newEvent.color = '';
+      }
     },
-    // 以下を追加、関数名はなんでもよい
-    clearAll: function() {
-      this.todoList = [];
-      console.log('全てのToDoが消去されました');
+    onEventClick({ nativeEvent, event }) {
+      if (confirm(`Are you sure you want to delete the event '${event.name}'?`)) {
+        this.events = this.events.filter(e => e !== event);
+      }
     },
-  },
+    prevMonth() {
+      this.$refs.calendar.prev();
+    },
+    nextMonth() {
+      this.$refs.calendar.next();
+    }
+  }
 });
