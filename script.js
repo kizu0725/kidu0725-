@@ -10,7 +10,7 @@ new Vue({
       date: '',
       color: ''
     },
-    events: [] // ここを空の配列にします
+    events: [] 
   }),
   methods: {
     addEvent() {
@@ -27,7 +27,7 @@ new Vue({
       }
     },
     onEventClick({ nativeEvent, event }) {
-      if (confirm(`Are you sure you want to delete the event '${event.name}'?`)) {
+      if (confirm(`イベント '${event.name}' を削除しますか？`)) {
         this.events = this.events.filter(e => e !== event);
       }
     },
